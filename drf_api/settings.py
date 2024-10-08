@@ -37,6 +37,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net',
+]
+
 
 # Application definition
 
