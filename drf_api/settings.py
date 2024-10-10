@@ -66,7 +66,7 @@ DEBUG = 'DEV' in os.environ
 
 ALLOWED_HOSTS = [
     '8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net', 
-    'https://drestf-api-8914bba56128.herokuapp.com'
+    'drestf-api-8914bba56128.herokuapp.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
