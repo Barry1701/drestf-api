@@ -73,6 +73,11 @@ CSRF_TRUSTED_ORIGINS = [
     'https://drestf-api-8914bba56128.herokuapp.com'
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "https://momenty-irl-73e110156348.herokuapp.com",
+    "https://3000-barry1701-momenty-g6m2tt2gpi1.ws.codeinstitute-ide.net",
+]
+
 
 # Application definition
 
