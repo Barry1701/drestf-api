@@ -70,13 +70,11 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     'https://8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net', 
-    'https://drestf-api-8914bba56128.herokuapp.com'
+    'https://drestf-api-8914bba56128.herokuapp.com',
+    'https://remeskin-00de58d1deef.herokuapp.com',
+    'https://3000-barry1701-remeskincom-4ugf58qe7yy.ws.codeinstitute-ide.net'
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://momenty-irl-73e110156348.herokuapp.com",
-    "https://3000-barry1701-momenty-g6m2tt2gpi1.ws.codeinstitute-ide.net",
-]
 
 
 # Application definition
@@ -122,6 +120,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://remeskin-00de58d1deef.herokuapp.com",
+    "https://3000-barry1701-remeskincom-4ugf58qe7yy.ws.codeinstitute-ide.net",
+    "https://8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net",
+    "https://drestf-api-8914bba56128.herokuapp.com"
+]
+
 
 CORS_ALLOW_CREDENTIALS = True
 
