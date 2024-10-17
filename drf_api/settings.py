@@ -64,6 +64,7 @@ DEBUG = 'DEV' in os.environ
 ALLOWED_HOSTS = [
     os.environ.get('ALLOWED_HOST'),
     '8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net',
+    'remeskin-00de58d1deef.herokuapp.com',
     'localhost'  #  na lokalny serwer
 ]
 
