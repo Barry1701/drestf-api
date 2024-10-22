@@ -32,8 +32,7 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=255)
     content = models.TextField(blank=True)
-    image = CloudinaryField('image',
-        default='https://res.cloudinary.com/dprwuhawr/image/upload/v1728378396/default_post_aczthl.jpg', blank=True
+    image = CloudinaryField('image', default='../default_post_aczthl', blank=True
     )
     image_filter = models.CharField(
         max_length=32, choices=image_filter_choices, default='normal'
