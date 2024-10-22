@@ -3,7 +3,6 @@ from posts.models import Post
 from likes.models import Like
 from tags.models import Tag
 
-
 class PostSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     is_owner = serializers.SerializerMethodField()
@@ -17,7 +16,13 @@ class PostSerializer(serializers.ModelSerializer):
         slug_field='name',
         queryset=Tag.objects.all()
     )
-  
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            return request.build_absolute_uri(obj.image.url)
+        return None
 
     def validate_image(self, value):
         if value.size > 2 * 1024 * 1024:
