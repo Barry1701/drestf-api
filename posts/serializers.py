@@ -1,3 +1,9 @@
+from rest_framework import serializers
+from posts.models import Post
+from likes.models import Like
+from tags.models import Tag
+
+
 class PostSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     is_owner = serializers.SerializerMethodField()
@@ -11,8 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
         slug_field='name',
         queryset=Tag.objects.all()
     )
-    # Nowe pole do zwracania pełnego URL-a obrazu
-    image_url = serializers.SerializerMethodField()
+    image = serializers.ImageField()
 
     def validate_image(self, value):
         if value.size > 2 * 1024 * 1024:
@@ -39,11 +44,6 @@ class PostSerializer(serializers.ModelSerializer):
             ).first()
             return like.id if like else None
         return None
-    
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url  # Pobierz pełny URL do obrazu z Cloudinary
-        return None
 
     class Meta:
         model = Post
@@ -52,5 +52,5 @@ class PostSerializer(serializers.ModelSerializer):
             'profile_image', 'created_at', 'updated_at',
             'title', 'content', 'image', 'image_filter',
             'like_id', 'likes_count', 'comments_count',
-            'tags', 'image_url'  # Dodajemy image_url
+            'tags'
         ]
