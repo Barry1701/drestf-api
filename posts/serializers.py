@@ -17,6 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
         slug_field='name',
         queryset=Tag.objects.all()
     )
+    image = serializers.ImageField()
 
     def validate_image(self, value):
         if value.size > 2 * 1024 * 1024:
