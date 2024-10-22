@@ -16,7 +16,7 @@ class PostSerializer(serializers.ModelSerializer):
         slug_field='name',
         queryset=Tag.objects.all()
     )
-    image = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
 
     def get_image(self, obj):
         request = self.context.get('request')
@@ -57,5 +57,5 @@ class PostSerializer(serializers.ModelSerializer):
             'profile_image', 'created_at', 'updated_at',
             'title', 'content', 'image', 'image_filter',
             'like_id', 'likes_count', 'comments_count',
-            'tags'
+            'tags', 'image_url'
         ]
