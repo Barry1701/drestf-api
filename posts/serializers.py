@@ -11,7 +11,7 @@ class PostSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
-    image = serializers.ImageField() 
+    image = serializers.ImageField()
     tags = serializers.SlugRelatedField(
         many=True,
         slug_field='name',
