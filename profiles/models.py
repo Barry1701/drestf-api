@@ -10,7 +10,7 @@ class Profile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=True)
-    image = CloudinaryField('image', default='default_profile_xysrop'
+    image = CloudinaryField('image', default='../default_profile_xysrop'
     )
 
     class Meta:
