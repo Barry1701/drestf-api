@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from posts.models import Post
-from tags.models import Tag
 
 class Product(models.Model):
     """
@@ -13,7 +12,6 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    tags = models.ManyToManyField(Tag, related_name='products', blank=True)
 
     class Meta:
         ordering = ['-created_at']
