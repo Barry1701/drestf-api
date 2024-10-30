@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category = serializers.StringRelatedField()
 
     def validate_image(self, value):
         if value.size > 2 * 1024 * 1024:  # Ograniczenie do 2 MB
