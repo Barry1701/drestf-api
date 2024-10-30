@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product, Category
+from .serializers import ProductSerializer, CategorySerializer
 from drf_api.permissions import IsOwnerOrReadOnly
 
 class ProductList(generics.ListCreateAPIView):
@@ -21,3 +21,19 @@ class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+class CategoryList(generics.ListCreateAPIView):
+    """
+    List all categories or create a new category if logged in.
+    """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update or delete a category instance.
+    """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
