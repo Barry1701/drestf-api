@@ -8,17 +8,20 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    # Pole do odczytu, które zwraca nazwę kategorii
+    # Read-only field that returns the category name
     category_name = serializers.ReadOnlyField(source='category.name')
-    # Pole do zapisu, które pozwala na wybór kategorii po jej ID
+    # Writeable field that allows selecting the category by its ID
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
 
     def validate_image(self, value):
-        if value.size > 2 * 1024 * 1024:  # Ograniczenie do 2 MB
+        # Limit the image size to 2 MB
+        if value.size > 2 * 1024 * 1024:
             raise serializers.ValidationError('Image size larger than 2MB!')
-        if value.image.height > 4096:  # Maksymalna wysokość 4096px
+        # Set maximum allowed image height to 4096px
+        if value.image.height > 4096:
             raise serializers.ValidationError('Image height larger than 4096px!')
-        if value.image.width > 4096:  # Maksymalna szerokość 4096px
+        # Set maximum allowed image width to 4096px
+        if value.image.width > 4096:
             raise serializers.ValidationError('Image width larger than 4096px!')
         return value
 
