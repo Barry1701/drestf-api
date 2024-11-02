@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 
 class Category(models.Model):
     """
@@ -19,7 +20,8 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
-    image = models.ImageField(upload_to='images/', default='../default_product_p5tht5', blank=True, null=True)
+    # Using CloudinaryField for image handling
+    image = CloudinaryField('image', default='default_product_p5tht5', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

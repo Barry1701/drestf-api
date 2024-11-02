@@ -1,15 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-
-
-
-
-
+from cloudinary.models import CloudinaryField
 
 class Post(models.Model):
     """
-    Post model, related to 'owner', i.e. a User instance.
+    Post model, related to 'owner', i.e., a User instance.
     Default image set so that we can always reference image.url.
     """
     image_filter_choices = [
@@ -34,13 +29,11 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=255)
     content = models.TextField(blank=True)
-    image = models.ImageField(
-        upload_to='images/', default='../default_post_ehnhuw', blank=True
-    )
+    # Using CloudinaryField for image handling
+    image = CloudinaryField('image', default='default_post_ehnhuw')
     image_filter = models.CharField(
         max_length=32, choices=image_filter_choices, default='normal'
     )
-
 
     class Meta:
         ordering = ['-created_at']
