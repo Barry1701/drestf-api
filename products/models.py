@@ -21,7 +21,7 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
     # Using CloudinaryField for image handling
-    image = CloudinaryField('image', default='default_product_p5tht5', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
