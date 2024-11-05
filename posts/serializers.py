@@ -35,11 +35,13 @@ class PostSerializer(serializers.ModelSerializer):
             return like.id if like else None
         return None
 
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.image.url) if obj.image else None
+
     class Meta:
         model = Post
         fields = [
-            'id', 'owner', 'is_owner', 'profile_id',
-            'profile_image', 'created_at', 'updated_at',
-            'title', 'content', 'image',
-            'like_id', 'likes_count', 'comments_count',
+            'id', 'owner', 'is_owner', 'profile_id', 'profile_image', 'created_at', 'updated_at',
+            'title', 'content', 'image', 'image_url', 'like_id', 'likes_count', 'comments_count',
         ]
