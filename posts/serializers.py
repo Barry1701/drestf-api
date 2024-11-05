@@ -3,7 +3,9 @@ from posts.models import Post
 from likes.models import Like
 
 class PostSerializer(serializers.ModelSerializer):
+    # Read-only field to display the username of the post's owner
     owner = serializers.ReadOnlyField(source='owner.username')
+    # Field to check if the requesting user is the owner of the post
     is_owner = serializers.SerializerMethodField()
     profile_id = serializers.ReadOnlyField(source='owner.profile.id')
     profile_image = serializers.ReadOnlyField(source='owner.profile.image.url')
@@ -12,8 +14,10 @@ class PostSerializer(serializers.ModelSerializer):
     comments_count = serializers.ReadOnlyField()
 
     def validate_image(self, value):
+        # Check image size; raise error if it exceeds 2MB
         if value.size > 2 * 1024 * 1024:
             raise serializers.ValidationError('Image size larger than 2MB!')
+        # Validate image dimensions, ensuring they are within the 4096px limit
         if value.image.height > 4096:
             raise serializers.ValidationError('Image height larger than 4096px!')
         if value.image.width > 4096:

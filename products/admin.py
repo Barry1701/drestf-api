@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Product, Category  # Dodaj Category, jeśli istnieje
+from .models import Product, Category  # Add Category if it exists
 
-# Zarejestruj oba modele w panelu admina
+# Register both models in the admin panel
 admin.site.register(Product)
 admin.site.register(Category)
