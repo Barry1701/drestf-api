@@ -4,6 +4,7 @@ from followers.models import Follower
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    owner_id = serializers.ReadOnlyField(source='owner.id')
     owner = serializers.ReadOnlyField(source='owner.username')
     is_owner = serializers.SerializerMethodField()
     following_id = serializers.SerializerMethodField()
@@ -31,4 +32,5 @@ class ProfileSerializer(serializers.ModelSerializer):
             'id', 'owner', 'created_at', 'updated_at', 'name',
             'content', 'image', 'is_owner', 'following_id',
             'posts_count', 'followers_count', 'following_count',
+            'owner_id',
         ]
