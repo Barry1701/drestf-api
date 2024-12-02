@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import generics, permissions
 from rest_framework.pagination import PageNumberPagination
 from .models import Product, Category
@@ -13,8 +14,23 @@ class ProductList(generics.ListCreateAPIView):
     List all products or create a new product if logged in.
     """
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        """
+        Optionally filters products by 'search' and 'category' parameters in the URL.
+        """
+        queryset = Product.objects.all()
+        search = self.request.query_params.get('search', None)
+        category_id = self.request.query_params.get('category', None)
+
+        if search:
+            queryset = queryset.filter(Q(name__icontains=search) | Q(description__icontains=search))
+
+        if category_id:
+            queryset = queryset.filter(category__id=category_id)
+
+        return queryset
 
     def perform_create(self, serializer):
         """
@@ -22,29 +38,3 @@ class ProductList(generics.ListCreateAPIView):
         of the created product.
         """
         serializer.save(owner=self.request.user)
-
-class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update, or delete a product instance if the user owns it.
-    """
-    permission_classes = [IsOwnerOrReadOnly]
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-class CategoryList(generics.ListCreateAPIView):
-    """
-    List all categories or create a new category if logged in.
-    Pagination is disabled for this view.
-    """
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    pagination_class = NoPagination  # Disable pagination for this view
-
-class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update, or delete a category instance.
-    """
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
