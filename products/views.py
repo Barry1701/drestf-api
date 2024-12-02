@@ -9,6 +9,7 @@ from drf_api.permissions import IsOwnerOrReadOnly
 class NoPagination(PageNumberPagination):
     page_size = None  # Disables pagination by setting no limit
 
+# Product List view (with search and category filters)
 class ProductList(generics.ListCreateAPIView):
     """
     List all products or create a new product if logged in.
@@ -20,14 +21,14 @@ class ProductList(generics.ListCreateAPIView):
         """
         Optionally filters products by 'search' and 'category' parameters in the URL.
         """
-        queryset = Product.objects.all()
-        search = self.request.query_params.get('search', None)
-        category_id = self.request.query_params.get('category', None)
+        queryset = Product.objects.all()  # Fetch all products by default
+        search = self.request.query_params.get('search', None)  # Get search term from query params
+        category_id = self.request.query_params.get('category', None)  # Get category ID from query params
 
-        if search:
+        if search:  # If there's a search term, filter products by name or description
             queryset = queryset.filter(Q(name__icontains=search) | Q(description__icontains=search))
 
-        if category_id:
+        if category_id:  # If a category is specified, filter by category
             queryset = queryset.filter(category__id=category_id)
 
         return queryset
@@ -38,3 +39,31 @@ class ProductList(generics.ListCreateAPIView):
         of the created product.
         """
         serializer.save(owner=self.request.user)
+
+# Product Detail view (Retrieve, Update, Delete)
+class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a product instance if the user owns it.
+    """
+    permission_classes = [IsOwnerOrReadOnly]  # Only the owner can modify/delete
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+# Category List view (List and create categories)
+class CategoryList(generics.ListCreateAPIView):
+    """
+    List all categories or create a new category if logged in.
+    """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    pagination_class = NoPagination  # Disable pagination for this view
+
+# Category Detail view (Retrieve, Update, Delete)
+class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, update, or delete a category instance.
+    """
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
