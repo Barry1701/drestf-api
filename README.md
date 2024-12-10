@@ -18,6 +18,8 @@ The following image shows the root page of the API, providing a welcome message.
 - [Profiles App](#profiles-app)
 - [Core API (drf_api)](#core-api-drf_api)
 - [Project Dependencies](#project-dependencies)
+- [Deployment](#deployment)
+- [Testing](#testing)
 
 
 ## Additional Files
@@ -1258,6 +1260,94 @@ The `requirements.txt` file specifies the packages required for this Django REST
 - **pytz==2024.2**: Timezone library used by Django to support time zone-aware date and time handling.
 
 These packages collectively enable a flexible and scalable backend, supporting features such as JWT-based authentication, image storage on Cloudinary, database management with PostgreSQL, and secure deployment configurations.
+
+## 🚀Deployment
+
+### Hosting Platform
+- The backend of the **Remeskin** platform is hosted on **Heroku**.
+
+### Deployment Process
+To deploy the backend, follow these steps:
+
+1. **Prepare the Environment**:
+   - Ensure you have the required dependencies installed:
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+2. **Set Up a Heroku App**:
+   - Log in to Heroku:
+     ```bash
+     heroku login
+     ```
+   - Create a new Heroku application:
+     ```bash
+     heroku create remeskin-backend
+     ```
+
+3. **Add Environment Variables**:
+   - Set the necessary environment variables in Heroku:
+     ```bash
+     heroku config:set SECRET_KEY=<your_secret_key>
+     heroku config:set DATABASE_URL=<your_postgresql_database_url>
+     heroku config:set CLOUDINARY_URL=<your_cloudinary_url>
+     heroku config:set ALLOWED_HOSTS=remeskin-backend.herokuapp.com
+     ```
+
+4. **Prepare the Database**:
+   - Make migrations:
+     ```bash
+     python manage.py makemigrations
+     ```
+   - Apply migrations:
+     ```bash
+     python manage.py migrate
+     ```
+
+5. **Collect Static Files**:
+   - Collect static files for deployment:
+     ```bash
+     python manage.py collectstatic
+     ```
+
+6. **Add Buildpacks**:
+   - Add the required buildpacks for Python and PostgreSQL:
+     ```bash
+     heroku buildpacks:add heroku/python
+     ```
+
+7. **Deploy to Heroku**:
+   - Initialize a Git repository (if not already initialized):
+     ```bash
+     git init
+     ```
+   - Add all files and commit:
+     ```bash
+     git add .
+     git commit -m "Deploy backend to Heroku"
+     ```
+   - Push the code to Heroku:
+     ```bash
+     git push heroku main
+     ```
+
+8. **Verify Deployment**:
+   - Visit the Heroku URL to verify that the backend is live.
+
+### Continuous Deployment
+- The backend repository is linked to Heroku for automatic deployment whenever changes are pushed to the `main` branch.
+
+### Live Link
+- The backend is live at: [https://drestf-api-8914bba56128.herokuapp.com/](https://drestf-api-8914bba56128.herokuapp.com/)
+
+## ✅Testing
+
+### Manual Testing
+- The API was manually tested using **Postman** to verify the following endpoints:
+  - User authentication: Registration, login, and token refresh.
+  - CRUD operations for posts, comments, likes, followers, and products.
+  - Image uploads via Cloudinary.
+
 
 
 
