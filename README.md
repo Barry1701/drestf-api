@@ -72,7 +72,7 @@ class Comment(models.Model):
   - `ordering`: Comments are ordered by `created_at` in descending order.
 
 - **String Representation**:
-  - Returns the content of the comment as its string representation.
+  - Returns the content of the comment as it's string representation.
  
 ### Serializers
 
