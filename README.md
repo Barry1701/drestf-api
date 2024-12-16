@@ -8,6 +8,8 @@ The following image shows the root page of the API, providing a welcome message.
 
 ![Root Route Page](documentation/root.png)
 
+[⬆️ Back to Top](#top)
+
 ## Project Structure
 
 - [Comments App](#comments-app)
@@ -229,6 +231,8 @@ urlpatterns = [
   - `comments/`: URL for listing all comments or creating a new comment.
   - `comments/<int:pk>/`: URL for retrieving, updating, or deleting a specific comment by its primary key (ID).
 
+[⬆️ Back to Top](#top)
+
 ## 👥Followers App 
 
 The `followers` app in this project manages relationships where a user can follow or unfollow another user. It includes models, serializers, views, and URL configurations to support creating, viewing, and deleting follower relationships.
@@ -399,6 +403,8 @@ urlpatterns = [
   - `followers/`: URL for listing all follower relationships or creating a new one.
   - `followers/<int:pk>/`: URL for retrieving or deleting a specific follower relationship by its primary key (ID).
 
+[⬆️ Back to Top](#top)
+
 ## 👍Likes App
 
 The `likes` app provides functionality for users to like posts. It includes models, serializers, views, and URL configurations to support creating, viewing, and deleting likes on posts.
@@ -566,6 +572,8 @@ urlpatterns = [
 
   - `likes/`: URL for listing all likes or creating a new one.
   - `likes/<int:pk>/`: URL for retrieving or deleting a specific like by its primary key (ID).
+
+[⬆️ Back to Top](#top)
 
 ## 📝Posts App
 
@@ -740,6 +748,8 @@ urlpatterns = [
 
 - **`posts/`**: Lists all posts or allows authenticated users to create a post.
 - **`posts/<int:pk>/`**: Retrieves, updates, or deletes a specific post by ID.
+
+[⬆️ Back to Top](#top)
 
 # 🧴Products App
 
@@ -992,6 +1002,8 @@ In the **Products App**, there are two main models: `Product` and `Category`. Wh
 
 ---
 
+[⬆️ Back to Top](#top)
+
 ## 👤Profiles App
 
 The `profiles` app manages user profiles, including viewing and updating profile details. Profiles are automatically created when a user account is created, leveraging Django signals.
@@ -1199,6 +1211,8 @@ admin.site.register(Profile)
 
 ```
 
+[⬆️ Back to Top](#top)
+
 ## 🌐Core API (drf_api)
 
 The `drf_api` core app serves as the central configuration and control hub for the entire project, managing high-level functionalities such as authentication, permissions, and routing. As the backbone of the project, it ensures secure and efficient interactions across the platform.
@@ -1220,6 +1234,8 @@ This app includes essential files and custom configurations to support:
     - **Environment Variable Handling**: Imports environment-specific variables (e.g., secret keys, database URLs) to securely manage sensitive information across different environments.
 
 Adjusting settings allows fine-tuning of elements like JWT authentication, cookie handling, and CORS policies to meet the project’s needs, enhancing security and performance across deployment stages.
+
+[⬆️ Back to Top](#top)
 
 ## 📦Project Dependencies
 
@@ -1260,6 +1276,8 @@ The `requirements.txt` file specifies the packages required for this Django REST
 - **pytz==2024.2**: Timezone library used by Django to support time zone-aware date and time handling.
 
 These packages collectively enable a flexible and scalable backend, supporting features such as JWT-based authentication, image storage on Cloudinary, database management with PostgreSQL, and secure deployment configurations.
+
+[⬆️ Back to Top](#top)
 
 ## 🚀Deployment
 
@@ -1340,6 +1358,8 @@ To deploy the backend, follow these steps:
 ### Live Link
 - The backend is live at: [https://drestf-api-8914bba56128.herokuapp.com/](https://drestf-api-8914bba56128.herokuapp.com/)
 
+[⬆️ Back to Top](#top)
+
 ## ✅Testing
 
 ### Manual Testing
@@ -1348,7 +1368,7 @@ To deploy the backend, follow these steps:
   - CRUD operations for posts, comments, likes, followers, and products.
   - Image uploads via Cloudinary.
 
-
+[⬆️ Back to Top](#top)
 
 
 
