@@ -20,8 +20,8 @@ class Comment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     content = models.TextField()
     category = models.CharField(
-        max_length=50, 
-        choices=CATEGORY_CHOICES, 
+        max_length=50,
+        choices=CATEGORY_CHOICES,
         default='general',
     )
 
