@@ -19,14 +19,22 @@ class Product(models.Model):
     Model representing a product recommendation for skin issues.
     """
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True, related_name="products"
+        Category,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="products",
     )
     image = models.ImageField(
-        upload_to="images/", default="../products_cfm6d0", blank=True, null=True
+        upload_to="images/",
+        default="../products_cfm6d0",
+        blank=True,
+        null=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

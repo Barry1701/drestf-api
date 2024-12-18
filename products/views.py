@@ -22,7 +22,8 @@ class ProductList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         """
-        Optionally filters products by 'search' and 'category' parameters in the URL.
+        Filters products by 'search' and 'category' query parameters.
+
         """
         queryset = Product.objects.all()  # Fetch all products by default
         search = self.request.query_params.get(
@@ -32,7 +33,7 @@ class ProductList(generics.ListCreateAPIView):
             "category", None
         )  # Get category ID from query params
 
-        if search:  # If there's a search term, filter products by name or description
+        if search:  # Filter products if search term exists
             queryset = queryset.filter(
                 Q(name__icontains=search) | Q(description__icontains=search)
             )
@@ -56,7 +57,7 @@ class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     Retrieve, update, or delete a product instance if the user owns it.
     """
 
-    permission_classes = [IsOwnerOrReadOnly]  # Only the owner can modify/delete
+    permission_classes = [IsOwnerOrReadOnly]  # Owner can modify/delete
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
