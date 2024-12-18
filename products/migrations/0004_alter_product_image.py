@@ -7,13 +7,19 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0003_category_alter_product_image_product_category'),
+        ("products", "0003_category_alter_product_image_product_category"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='product',
-            name='image',
-            field=cloudinary.models.CloudinaryField(blank=True, default='default_product_p5tht5', max_length=255, null=True, verbose_name='image'),
+            model_name="product",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default="default_product_p5tht5",
+                max_length=255,
+                null=True,
+                verbose_name="image",
+            ),
         ),
     ]

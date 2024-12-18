@@ -7,13 +7,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('posts', '0001_initial'),
+        ("posts", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='post',
-            name='image',
-            field=cloudinary.models.CloudinaryField(blank=True, default='../default_post_ehnhuw', max_length=255, verbose_name='image'),
+            model_name="post",
+            name="image",
+            field=cloudinary.models.CloudinaryField(
+                blank=True,
+                default="../default_post_ehnhuw",
+                max_length=255,
+                verbose_name="image",
+            ),
         ),
     ]
