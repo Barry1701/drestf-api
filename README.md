@@ -44,174 +44,264 @@ The `comments` app in this project handles user comments on posts. It includes m
 The `Comment` model represents a comment that a user can post on a specific post. It includes fields to associate each comment with a user and a post, as well as timestamp fields to track when the comment was created and last updated.
 
 ```python
-from django.db import models 
+from django.db import models
 from django.contrib.auth.models import User
 from posts.models import Post
 
+
 class Comment(models.Model):
-   
+    """
+    Comment model, related to User and Post
+    """
+
+    CATEGORY_CHOICES = [
+        ('general', 'General'),
+        ('question', 'Question'),
+        ('tip', 'Tip'),
+    ]
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     content = models.TextField()
+    category = models.CharField(
+        max_length=50, 
+        choices=CATEGORY_CHOICES, 
+        default='general',
+    )
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at", "category"]
 
     def __str__(self):
-        return self.content
+        return f"{self.owner.username} - {self.get_category_display()}"
 ```
 
-- **Fields**:
-  - `owner`: Foreign key to the `User` model, representing the user who owns the comment.
-  - `post`: Foreign key to the `Post` model, representing the post that the comment belongs to.
-  - `created_at`: Timestamp for when the comment was created.
-  - `updated_at`: Timestamp for when the comment was last updated.
-  - `content`: Text content of the comment.
+#### Fields:
 
-- **Meta Options**:
-  - `ordering`: Comments are ordered by `created_at` in descending order.
+- **`owner`**:  
+  - **Type**: ForeignKey  
+  - **Related Model**: User  
+  - **Description**: The user who created the comment.  
+  - **Behavior**: `on_delete=models.CASCADE` ensures the comment is deleted when the user is removed.  
 
-- **String Representation**:
-  - Returns the content of the comment as it's string representation.
- 
-### Serializers
+- **`post`**:  
+  - **Type**: ForeignKey  
+  - **Related Model**: Post  
+  - **Description**: The post to which the comment belongs.  
+  - **Behavior**: `on_delete=models.CASCADE` ensures the comment is removed when the related post is deleted.  
 
-The serializers convert `Comment` model instances into JSON and add additional fields for the API response.
+- **`created_at`**:  
+  - **Type**: DateTimeField  
+  - **Behavior**: Automatically sets the date and time when the comment is created.  
 
-### `CommentSerializer`
+- **`updated_at`**:  
+  - **Type**: DateTimeField  
+  - **Behavior**: Automatically updates to the current date and time when the comment is modified.  
 
-Adds fields to represent additional data related to the owner (username, profile image) and timestamps in human-readable format.
+- **`content`**:  
+  - **Type**: TextField  
+  - **Description**: Stores the text content of the comment.  
 
-```python
-from django.contrib.humanize.templatetags.humanize import naturaltime
-from rest_framework import serializers
-from .models import Comment
-
-class CommentSerializer(serializers.ModelSerializer):
-   
-    owner = serializers.ReadOnlyField(source='owner.username')
-    is_owner = serializers.SerializerMethodField()
-    profile_id = serializers.ReadOnlyField(source='owner.profile.id')
-    profile_image = serializers.ReadOnlyField(source='owner.profile.image.url')
-    created_at = serializers.SerializerMethodField()
-    updated_at = serializers.SerializerMethodField()
-
-    def get_is_owner(self, obj):
-        request = self.context['request']
-        return request.user == obj.owner
-
-    def get_created_at(self, obj):
-        return naturaltime(obj.created_at)
-
-    def get_updated_at(self, obj):
-        return naturaltime(obj.updated_at)
-
-    class Meta:
-        model = Comment
-        fields = [
-            'id', 'owner', 'is_owner', 'profile_id', 'profile_image',
-            'post', 'created_at', 'updated_at', 'content'
-        ]
-
-```
-
-- **Fields**:
-
-  - `owner`: Read-only field that displays the username of the comment owner.
-  - `is_owner`: Boolean field indicating if the requesting user is the owner of the comment.
-  - `profile_id`: Read-only field that displays the profile ID of the comment owner.
-  - `profile_image`: Read-only field that displays the URL of the profile image of the comment owner.
-  - `created_at`: Human-readable timestamp for when the comment was created.
-  - `updated_at`: Human-readable timestamp for when the comment was last updated.
+- **`category`**:  
+  - **Type**: CharField  
+  - **Max Length**: 50  
+  - **Choices**:  
+    - `'general'` → General comments  
+    - `'question'` → Comments containing questions  
+    - `'tip'` → Comments sharing tips  
+  - **Default**: `'general'`  
 
 ---
 
-- **Methods**:
+#### Meta Options:
 
-  - `get_is_owner`: Determines if the current user is the owner of the comment.
-  - `get_created_at`: Converts the `created_at` timestamp to a human-readable format.
-  - `get_updated_at`: Converts the `updated_at` timestamp to a human-readable format.
+- **`ordering`**:  
+  Comments are ordered by:  
+  - **`-created_at`**: Newest comments appear first.  
+  - **`category`**: Secondary ordering by category.  
+
+---
+
+#### String Representation:
+
+- **`__str__`**:  
+  Returns a formatted string:  
+  `"owner.username - category"`  
+  **Example**: `"user123 - Question"`  
+
+#### Example Data:
+
+| **Field**       | **Value**                      |
+|------------------|--------------------------------|
+| **`owner`**     | user123                        |
+| **`post`**      | 5                              |
+| **`content`**   | "Is this product safe for kids?"|
+| **`category`**  | question                       |
+| **`created_at`**| 2024-12-16 12:00               |
+| **`updated_at`**| 2024-12-16 12:01               |
+
+---
+
+#### String Representation:
+
+`"user123 - Question"`
+
+
+### Serializers
+
+#### **Overview**
+This file defines serializers for the `Comment` model, including the `CommentSerializer` for listing and creating comments, and the `CommentDetailSerializer` for a detailed view.
+
+---
+
+### `CommentSerializer`
+
+| **Field**          | **Type**         | **Source**                      | **Description**                                   |
+|---------------------|------------------|---------------------------------|--------------------------------------------------|
+| **`id`**           | ReadOnlyField    | Auto-generated                  | Primary key for the comment.                     |
+| **`owner`**        | ReadOnlyField    | `owner.username`                | Returns the username of the comment's owner.     |
+| **`is_owner`**     | SerializerMethod | `get_is_owner()`                | Boolean: `True` if the request user is the owner.|
+| **`profile_id`**   | ReadOnlyField    | `owner.profile.id`              | Returns the profile ID of the owner.             |
+| **`profile_image`**| ReadOnlyField    | `owner.profile.image.url`       | URL of the profile image.                        |
+| **`post`**         | PrimaryKeyRelated| Direct model field              | Post ID the comment is associated with.          |
+| **`category`**     | CharField        | Direct model field              | Category of the comment (`general`, `question`, `tip`). |
+| **`created_at`**   | SerializerMethod | `get_created_at()`              | Human-readable time since creation (e.g., "2 days ago"). |
+| **`updated_at`**   | SerializerMethod | `get_updated_at()`              | Human-readable time since last update.           |
+| **`content`**      | TextField        | Direct model field              | The text content of the comment.                 |
+
+---
+
+#### **Methods**
+- **`get_is_owner(self, obj)`**  
+  - Checks if the request user is the owner of the comment.
+  - **Returns**: `True` or `False`.
+
+- **`get_created_at(self, obj)`**  
+  - Returns the time since creation in natural language (e.g., "5 hours ago").  
+  - **Uses**: `naturaltime()` from `django.contrib.humanize`.
+
+- **`get_updated_at(self, obj)`**  
+  - Returns the time since last update in natural language.  
+  - **Uses**: `naturaltime()`.
+
+---
+
+#### **Meta Class**
+- **Model**: `Comment`
+- **Fields**:
+  - `id`, `owner`, `is_owner`, `profile_id`, `profile_image`, `post`, `category`, `created_at`, `updated_at`, `content`.
 
 ---
 
 ### `CommentDetailSerializer`
 
-Used for detailed views of comments, making the `post` field read-only.
+| **Inheritance** | **Base Serializer**           |
+|-----------------|--------------------------------|
+| `CommentDetailSerializer` | Inherits from `CommentSerializer`. |
 
-```python
-class CommentDetailSerializer(CommentSerializer):
-   
-    post = serializers.ReadOnlyField(source='post.id')
+- **Modifications**:
+  - **`post`**: Set to **ReadOnlyField** with `source="post.id"` to prevent requiring the post field on update.
 
-```
+---
 
-- **Fields**
+#### Example Data (CommentSerializer)
+| **Field**          | **Value**                        |
+|---------------------|----------------------------------|
+| **`id`**           | 1                                |
+| **`owner`**        | "user123"                        |
+| **`is_owner`**     | `True`                           |
+| **`profile_id`**   | 10                               |
+| **`profile_image`**| "https://example.com/profile.jpg"|
+| **`post`**         | 5                                |
+| **`category`**     | "question"                       |
+| **`created_at`**   | "3 hours ago"                    |
+| **`updated_at`**   | "2 hours ago"                    |
+| **`content`**      | "Is this product safe for kids?" |
 
-  - `post`: Read-only field displaying the ID of the associated post. This allows for viewing the post ID without the need to set it on each update.
+---
+
+#### **CommentDetailSerializer** Example
+| **Field**          | **Value**                        |
+|---------------------|----------------------------------|
+| **`post`**         | 5                                |
+| **`content`**      | "Is this product safe for kids?" |
+
+---
+
+#### String Representation (Example)
+
+    "user123 - Question"
 
 ### Views
 
-The views provide the logic for listing, creating, retrieving, updating, and deleting comments.
+The `views.py` file contains class-based views for handling the `Comment` model's API endpoints. These views provide functionality for listing, creating, retrieving, updating, and deleting comments.
 
-### `CommentList`
+#### `CommentList` View
+- **Purpose**:
+  - Allows users to list all comments or create a new comment if they are logged in.
+  - Supports filtering by `post` and `category`.
 
-Handles listing all comments or creating a new comment if the user is authenticated. Supports filtering by `post` to retrieve comments specific to a post.
+- **Class**: `ListCreateAPIView`
+- **Serializer**: `CommentSerializer`
+- **Permission Classes**: `IsAuthenticatedOrReadOnly`
+  - Logged-out users can view comments.
+  - Logged-in users can create new comments.
+- **Queryset**: `Comment.objects.all()`
+- **Filtering**: Supports filters for `post` and `category` using `DjangoFilterBackend`.
+- **Custom Method**:
+  - `perform_create`: Automatically assigns the logged-in user as the owner of the comment when creating it.
+
+#### Code:
 
 ```python
-from rest_framework import generics, permissions
-from django_filters.rest_framework import DjangoFilterBackend
-from drf_api.permissions import IsOwnerOrReadOnly
-from .models import Comment
-from .serializers import CommentSerializer, CommentDetailSerializer
-
 class CommentList(generics.ListCreateAPIView):
-   
+    """
+    List comments or create a comment if logged in.
+
+    Allows filtering by post and category.
+    """
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Comment.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['post']
+    filterset_fields = ["post", "category"]
 
     def perform_create(self, serializer):
+        """
+        Associate the logged-in user as the owner of the comment.
+        """
         serializer.save(owner=self.request.user)
-
 ```
 
-- **Methods**
+#### `CommentDetail` View
 
-  - `perform_create`: Sets the `owner` of the comment to the current user when creating a new comment.
+**Purpose**:
+- Allows users to retrieve a comment by its ID.
+- Permits logged-in users who own the comment to update or delete it.
 
----
+**Class**: `RetrieveUpdateDestroyAPIView`
 
-- **Attributes**
+**Serializer**: `CommentDetailSerializer`
 
-  - `serializer_class`: Specifies the serializer to use for the `Comment` model.
-  - `permission_classes`: Allows authenticated users to create comments; others can only view.
-  - `queryset`: Defines the base queryset to retrieve all comments.
-  - `filter_backends`: Enables filtering by `post` ID.
-  - `filterset_fields`: Allows filtering of comments by the `post` field.
+**Permission Classes**: `IsOwnerOrReadOnly`
+- Ensures only the owner of the comment can update or delete it.
 
-### `CommentDetail`
+**Queryset**: `Comment.objects.all()`
 
-Provides a detail view, allowing the user to retrieve, update, or delete a comment by ID if they own it.
-
+**Code**:
 ```python
-
 class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
-    
+    """
+    Retrieve a comment, or update or delete it by id if you own it.
+    """
     permission_classes = [IsOwnerOrReadOnly]
     serializer_class = CommentDetailSerializer
     queryset = Comment.objects.all()
-
 ```
 
-- **Attributes**
 
-  - `permission_classes`: Restricts update and delete actions to the comment owner; others have read-only access.
-  - `serializer_class`: Specifies the `CommentDetailSerializer` for detailed representation.
-  - `queryset`: Defines the base queryset to retrieve comments.
 
 ### URLs
 
