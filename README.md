@@ -238,7 +238,7 @@ This file defines serializers for the `Comment` model, including the `CommentSer
 
 The `views.py` file contains class-based views for handling the `Comment` model's API endpoints. These views provide functionality for listing, creating, retrieving, updating, and deleting comments.
 
-#### `CommentList` View
+### `CommentList` View
 - **Purpose**:
   - Allows users to list all comments or create a new comment if they are logged in.
   - Supports filtering by `post` and `category`.
@@ -275,7 +275,7 @@ class CommentList(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 ```
 
-#### `CommentDetail` View
+### `CommentDetail` View
 
 **Purpose**:
 - Allows users to retrieve a comment by its ID.
