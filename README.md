@@ -1358,6 +1358,17 @@ To deploy the backend, follow these steps:
 ### Live Link
 - The backend is live at: [https://drestf-api-8914bba56128.herokuapp.com/](https://drestf-api-8914bba56128.herokuapp.com/)
 
+### Code Quality
+
+All Python code was formatted to comply with **PEP8** standards using tools like `flake8` and `black`.
+
+To exclude migrations from formatting, the following approach was used:
+
+```bash
+git add $(git ls-files | grep -v 'migrations/')
+
+```
+
 [⬆️ Back to Top](#top)
 
 ## ✅Testing

@@ -8,15 +8,20 @@ from .serializers import CommentSerializer, CommentDetailSerializer
 class CommentList(generics.ListCreateAPIView):
     """
     List comments or create a comment if logged in.
+
+    Allows filtering by post and category.
     """
 
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Comment.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["post"]
+    filterset_fields = ["post", "category"]
 
     def perform_create(self, serializer):
+        """
+        Associate the logged-in user as the owner of the comment.
+        """
         serializer.save(owner=self.request.user)
 
 
