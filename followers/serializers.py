@@ -16,8 +16,21 @@ class FollowerSerializer(serializers.ModelSerializer):
         model = Follower
         fields = ["id", "owner", "created_at", "followed", "followed_name"]
 
+    def validate(self, attrs):
+        """
+        Validate that a user is not trying to follow themselves.
+        """
+        if self.context["request"].user == attrs["followed"]:
+            raise serializers.ValidationError({"detail": "You cannot follow yourself."})
+        return attrs
+
     def create(self, validated_data):
+        """
+        Handle unique constraint violations gracefully.
+        """
         try:
             return super().create(validated_data)
         except IntegrityError:
-            raise serializers.ValidationError({"detail": "possible duplicate"})
+            raise serializers.ValidationError(
+                {"detail": "You are already following this user."}
+            )
