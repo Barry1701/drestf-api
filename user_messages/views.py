@@ -12,7 +12,6 @@ class MessageList(generics.ListCreateAPIView):
     - Lists only messages where the logged-in user is the recipient.
     - Allows logged-in users to create new messages.
     """
-
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = MessageSerializer
 
@@ -30,14 +29,13 @@ class MessageList(generics.ListCreateAPIView):
         serializer.save(sender=self.request.user)
 
 
-class MessageDetail(generics.RetrieveAPIView):
+class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
     """
-    API endpoint to retrieve a specific message for the logged-in user.
+    API endpoint to retrieve, update, or delete a specific message for the logged-in user.
 
     - Requires authentication.
     - Ensures the logged-in user is the recipient of the requested message.
     """
-
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class = MessageSerializer
 
