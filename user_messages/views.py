@@ -47,3 +47,9 @@ class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
         """
         user = self.request.user
         return Message.objects.filter(recipient=user)
+
+    def perform_update(self, serializer):
+        """
+        Allow updating only specific fields like `is_read`.
+        """
+        serializer.save()
