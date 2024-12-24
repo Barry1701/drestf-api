@@ -2,6 +2,8 @@ from rest_framework import generics, permissions
 from drf_api.permissions import IsOwnerOrReadOnly
 from .models import Message
 from .serializers import MessageSerializer
+from rest_framework.exceptions import PermissionDenied
+
 
 
 class MessageList(generics.ListCreateAPIView):

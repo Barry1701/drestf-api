@@ -28,4 +28,14 @@ class MessageSerializer(serializers.ModelSerializer):
             "created_at",
             "is_read",
         ]
-        read_only_fields = ["sender"] 
+        read_only_fields = ["sender", "recipient", "subject", "content", "created_at"]
+
+    def update(self, instance, validated_data):
+        """
+        Limit updates to the 'is_read' field only.
+        """
+        if "is_read" in validated_data:
+            instance.is_read = validated_data["is_read"]
+            instance.save()
+            return instance
+        raise serializers.ValidationError("Only the 'is_read' field can be updated.")
