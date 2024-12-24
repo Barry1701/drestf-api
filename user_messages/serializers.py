@@ -1,7 +1,3 @@
-from rest_framework import serializers
-from .models import Message
-from django.contrib.auth.models import User
-
 class MessageSerializer(serializers.ModelSerializer):
     sender_username = serializers.ReadOnlyField(source="sender.username")
     recipient_username = serializers.ReadOnlyField(source="recipient.username")
@@ -15,27 +11,11 @@ class MessageSerializer(serializers.ModelSerializer):
         }
     )
 
-    def validate_subject(self, value):
-        """
-        Ensure the subject is not empty or only whitespace.
-        """
-        if not value.strip():
-            raise serializers.ValidationError("Subject cannot be blank.")
-        return value
-
-    def validate_content(self, value):
-        """
-        Ensure the content is not empty or only whitespace.
-        """
-        if not value.strip():
-            raise serializers.ValidationError("Content cannot be blank.")
-        return value
-
     class Meta:
         model = Message
         fields = [
             "id",
-            "sender",
+            "sender",  # Tylko do odczytu
             "recipient",
             "sender_username",
             "recipient_username",
@@ -44,3 +24,4 @@ class MessageSerializer(serializers.ModelSerializer):
             "created_at",
             "is_read",
         ]
+        read_only_fields = ["sender"]  # Oznacz pole sender jako tylko do odczytu
