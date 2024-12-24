@@ -1,3 +1,7 @@
+from rest_framework import serializers
+from .models import Message
+from django.contrib.auth.models import User
+
 class MessageSerializer(serializers.ModelSerializer):
     sender_username = serializers.ReadOnlyField(source="sender.username")
     recipient_username = serializers.ReadOnlyField(source="recipient.username")
@@ -24,4 +28,4 @@ class MessageSerializer(serializers.ModelSerializer):
             "created_at",
             "is_read",
         ]
-        read_only_fields = ["sender"]  # Oznacz pole sender jako tylko do odczytu
+        read_only_fields = ["sender"] 
