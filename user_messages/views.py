@@ -5,7 +5,6 @@ from .serializers import MessageSerializer
 from rest_framework.exceptions import PermissionDenied
 
 
-
 class MessageList(generics.ListCreateAPIView):
     """
     API endpoint to list all messages for the logged-in user or create a new message.
@@ -27,7 +26,11 @@ class MessageList(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         """
         Automatically set the logged-in user as the sender of the new message.
+        Prevent users from sending messages to themselves.
         """
+        recipient = serializer.validated_data.get("recipient")
+        if recipient == self.request.user:
+            raise PermissionDenied("You cannot send a message to yourself.")
         serializer.save(sender=self.request.user)
 
 
@@ -43,13 +46,17 @@ class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         """
-        Restrict access to messages where the logged-in user is the recipient.
+        Restrict access to messages where the logged-in user is the recipient or sender.
         """
         user = self.request.user
-        return Message.objects.filter(recipient=user)
+        return Message.objects.filter(recipient=user) | Message.objects.filter(sender=user)
 
     def perform_update(self, serializer):
         """
-        Allow updating only specific fields like `is_read`.
+        Allow updating only the `is_read` field.
+        Ensure that only recipients can mark messages as read.
         """
+        instance = self.get_object()
+        if self.request.user != instance.recipient:
+            raise PermissionDenied("Only the recipient can mark a message as read.")
         serializer.save()
