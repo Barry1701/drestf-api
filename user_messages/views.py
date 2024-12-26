@@ -35,28 +35,21 @@ class MessageList(generics.ListCreateAPIView):
 
 
 class MessageDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint to retrieve, update, or delete a specific message for the logged-in user.
-
-    - Requires authentication.
-    - Ensures the logged-in user is the recipient of the requested message.
-    """
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     serializer_class = MessageSerializer
 
     def get_queryset(self):
         """
-        Restrict access to messages where the logged-in user is the recipient or sender.
+        Restrict access to messages where the logged-in user is the sender or recipient.
         """
         user = self.request.user
         return Message.objects.filter(recipient=user) | Message.objects.filter(sender=user)
 
     def perform_update(self, serializer):
         """
-        Allow updating only the `is_read` field.
-        Ensure that only recipients can mark messages as read.
+        Allow only the recipient to update the `is_read` field.
         """
-        instance = self.get_object()
-        if self.request.user != instance.recipient:
-            raise PermissionDenied("Only the recipient can mark a message as read.")
+        message = self.get_object()
+        if self.request.user != message.recipient:
+            raise PermissionDenied("You do not have permission to update this message.")
         serializer.save()
