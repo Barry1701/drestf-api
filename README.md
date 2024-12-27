@@ -671,73 +671,143 @@ The `posts` app is a core component of this project, enabling users to create, v
 
 ### Models
 
-The `Post` model represents a user-generated post. Each post is linked to a specific user and includes optional content and an image.
+### Models
+
+The `Post` model represents a user-generated post. Each post is linked to a specific user and includes optional content, an image, and a category.
 
 ```python
 from django.db import models
 from django.contrib.auth.models import User
 
 class Post(models.Model):
+    CATEGORY_CHOICES = [
+        ("eczema", "Eczema"),
+        ("allergy", "Allergy"),
+        ("general", "General"),
+    ]
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     title = models.CharField(max_length=255)
     content = models.TextField(blank=True)
     image = models.ImageField(
-        upload_to='images/', default='../default_post_ehnhuw', blank=True, null=True
+        upload_to="images/", default="../post_nhmbfe", blank=True, null=True
+    )
+    category = models.CharField(
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        default="general",
+        blank=True,
+        null=True,
     )
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f'{self.id} {self.title}'
+        return f"{self.id} {self.title}"
+
 
 ```
 
-- **Fields**:
-  - `owner`: Links each post to the user who created it.
-  - `created_at`: Records when the post was created.
-  - `updated_at`: Updates whenever the post is modified.
-  - `title`: A brief title summarizing the post.
-  - `content`: Text content of the post.
-  - `image`: An optional image associated with the post.
+### Fields:
+- **`owner`**:  
+  - **Type**: ForeignKey  
+  - **Related Model**: User  
+  - **Description**: Links each post to the user who created it.  
+  - **Behavior**: `on_delete=models.CASCADE` ensures the post is deleted when the user is removed.  
 
-- **Meta Options**:
-  - `ordering`: Orders posts by creation date in descending order, displaying the newest posts first.
+- **`created_at`**:  
+  - **Type**: DateTimeField  
+  - **Behavior**: Automatically sets the date and time when the post is created.  
 
-- **String Representation**:
-  - Returns the post ID and title as its string representation for easy identification.
+- **`updated_at`**:  
+  - **Type**: DateTimeField  
+  - **Behavior**: Automatically updates to the current date and time when the post is modified.  
+
+- **`title`**:  
+  - **Type**: CharField  
+  - **Max Length**: 255  
+  - **Description**: A brief title summarizing the post.  
+
+- **`content`**:  
+  - **Type**: TextField  
+  - **Description**: Text content of the post.  
+
+- **`image`**:  
+  - **Type**: ImageField  
+  - **Upload Path**: `images/`  
+  - **Default**: `../post_nhmbfe`  
+  - **Description**: An optional image associated with the post.  
+
+- **`category`**:  
+  - **Type**: CharField  
+  - **Max Length**: 50  
+  - **Choices**:  
+    - `'eczema'` → Posts about eczema  
+    - `'allergy'` → Posts about allergies  
+    - `'general'` → General posts  
+  - **Default**: `'general'`  
+  - **Description**: Categorizes the post based on its topic.  
+
+
+#### Meta Options:
+- **`ordering`**:  
+  Posts are ordered by:
+  - **`-created_at`**: Newest posts appear first.
+
+
+#### String Representation:
+- **`__str__`**:  
+  Returns a formatted string with the post ID and title:  
+  **Example**: `"1 My Post Title"`
+
  
 ### Serializers
-The `PostSerializer` converts `Post` model instances into JSON format. It also adds supplementary fields that include metadata about the owner, profile details, and counts for likes and comments.
+
+The `PostSerializer` converts `Post` model instances into JSON format. It also adds supplementary fields that include metadata about the owner, profile details, like information, and counts for likes and comments.
 
 ```python
 from rest_framework import serializers
 from posts.models import Post
 from likes.models import Like
 
+
 class PostSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    # Read-only field to display the username of the post's owner
+    owner = serializers.ReadOnlyField(source="owner.username")
+    # Field to check if the requesting user is the owner of the post
     is_owner = serializers.SerializerMethodField()
-    profile_id = serializers.ReadOnlyField(source='owner.profile.id')
-    profile_image = serializers.ReadOnlyField(source='owner.profile.image.url')
+    profile_id = serializers.ReadOnlyField(source="owner.profile.id")
+    profile_image = serializers.ReadOnlyField(source="owner.profile.image.url")
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
 
     def validate_image(self, value):
+        # Check image size; raise error if it exceeds 2MB
         if value.size > 2 * 1024 * 1024:
-            raise serializers.ValidationError('Image size larger than 2MB!')
-        if value.image.height > 4096 or value.image.width > 4096:
-            raise serializers.ValidationError('Image dimensions exceed 4096x4096 pixels!')
+            raise serializers.ValidationError(
+                "Image size larger than 2MB!"
+            )
+        # Validate image dimensions, ensuring they are within the 4096px limit
+        if value.image.height > 4096:
+            raise serializers.ValidationError(
+                "Image height larger than 4096px!"
+            )
+        if value.image.width > 4096:
+            raise serializers.ValidationError(
+                "Image width larger than 4096px!"
+            )
         return value
 
     def get_is_owner(self, obj):
-        return self.context['request'].user == obj.owner
+        request = self.context["request"]
+        return request.user == obj.owner
 
     def get_like_id(self, obj):
-        user = self.context['request'].user
+        user = self.context["request"].user
         if user.is_authenticated:
             like = Like.objects.filter(owner=user, post=obj).first()
             return like.id if like else None
@@ -746,81 +816,158 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = [
-            'id', 'owner', 'is_owner', 'profile_id',
-            'profile_image', 'created_at', 'updated_at',
-            'title', 'content', 'image', 'like_id', 'likes_count', 'comments_count',
+            "id",
+            "owner",
+            "is_owner",
+            "profile_id",
+            "profile_image",
+            "created_at",
+            "updated_at",
+            "title",
+            "content",
+            "image",
+            "category",
+            "like_id",
+            "likes_count",
+            "comments_count",
         ]
 
 ```
 
-- **Fields**:
-  - **id**: Unique identifier for each post.
-  - **owner**, **is_owner**: Fields to display the post owner and check if the current user is the owner.
-  - **profile_id**, **profile_image**: Metadata about the post owner's profile.
-  - **like_id**: ID of the like if the current user has liked the post.
-  - **likes_count**, **comments_count**: Count of likes and comments for each post.
+#### Fields:
+- **`id`**: Unique identifier for each post.  
+- **`owner`**: Displays the username of the post's owner.  
+- **`is_owner`**: Boolean indicating if the current user is the owner of the post.  
+- **`profile_id`**: ID of the owner's profile.  
+- **`profile_image`**: URL of the owner's profile image.  
+- **`created_at`**: Timestamp for when the post was created.  
+- **`updated_at`**: Timestamp for when the post was last updated.  
+- **`title`**: The title of the post.  
+- **`content`**: The text content of the post.  
+- **`image`**: Optional image associated with the post.  
+- **`category`**: The category of the post (e.g., "eczema", "allergy", "general").  
+- **`like_id`**: ID of the like associated with the post for the requesting user (if any).  
+- **`likes_count`**: Total number of likes on the post.  
+- **`comments_count`**: Total number of comments on the post.  
 
-- **Methods**:
-  - **validate_image**: Ensures the uploaded image is within size and dimension constraints.
-  - **get_is_owner**: Checks if the current user owns the post.
-  - **get_like_id**: Retrieves the like ID if the user has already liked the post.
- 
+
+ #### Methods:
+- **`validate_image(self, value)`**:  
+  - Validates the size and dimensions of the uploaded image.  
+  - Raises a validation error if the image exceeds 2MB or 4096px in height or width.  
+
+- **`get_is_owner(self, obj)`**:  
+  - Checks if the current user is the owner of the post.  
+
+- **`get_like_id(self, obj)`**:  
+  - Retrieves the ID of the like associated with the post for the current user (if authenticated).  
+
 ### Views
-The views handle listing, creating, retrieving, updating, and deleting posts.
 
-### `PostList`
+The views handle listing, creating, retrieving, updating, and deleting posts. They also include filtering, searching, and ordering functionalities.
+
+#### `PostList`
 The `PostList` view allows users to list all posts or create a new post if they are authenticated.
 
 ```python
 from django.db.models import Count
 from rest_framework import generics, permissions, filters
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_api.permissions import IsOwnerOrReadOnly
 from .models import Post
 from .serializers import PostSerializer
 
+
 class PostList(generics.ListCreateAPIView):
+    """
+    List posts or create a post if logged in
+    The perform_create method associates the post with the logged in user.
+    """
+
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Post.objects.annotate(
-        likes_count=Count('likes', distinct=True),
-        comments_count=Count('comment', distinct=True)
-    ).order_by('-created_at')
-    filter_backends = [filters.OrderingFilter, filters.SearchFilter, DjangoFilterBackend]
-    filterset_fields = ['owner__followed__owner__profile', 'likes__owner__profile', 'owner__profile']
-    search_fields = ['owner__username', 'title']
-    ordering_fields = ['likes_count', 'comments_count', 'likes__created_at']
+        likes_count=Count("likes", distinct=True),
+        comments_count=Count("comment", distinct=True),
+    ).order_by("-created_at")
+    filter_backends = [
+        filters.OrderingFilter,
+        filters.SearchFilter,
+        DjangoFilterBackend,
+    ]
+    filterset_fields = [
+        "owner__followed__owner__profile",
+        "likes__owner__profile",
+        "owner__profile",
+        "category",
+    ]
+    search_fields = [
+        "owner__username",
+        "title",
+        "category",
+    ]
+    ordering_fields = [
+        "likes_count",
+        "comments_count",
+        "likes__created_at",
+        "category",
+    ]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
 ```
 
-- **Attributes**:
-  - **permission_classes**: Allows only authenticated users to create posts.
-  - **queryset**: Annotates posts with counts for likes and comments.
-  - **filter_backends**: Enables filtering, searching, and ordering of posts.
-  - **filterset_fields**: Filters posts by profile and followed user relationships.
-  - **search_fields**: Allows searching by username or title.
-  - **ordering_fields**: Orders posts by likes count, comments count, or like creation date.
- 
-### `PostDetail`
+- **Purpose**: Lists all posts or allows authenticated users to create a post.  
+- **Filtering**: Supports filtering by owner’s profile, likes, and category.  
+- **Searching**: Allows searching by username, title, and category.  
+- **Ordering**: Posts can be ordered by likes count, comments count, like creation date, and category.
+
+#### `PostDetail`
 The `PostDetail` view handles retrieving, updating, or deleting a specific post if the current user is the owner.
 
 ```python
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve a post and edit or delete it if you own it.
+    """
+
     serializer_class = PostSerializer
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Post.objects.annotate(
-        likes_count=Count('likes', distinct=True),
-        comments_count=Count('comment', distinct=True)
-    ).order_by('-created_at')
+        likes_count=Count("likes", distinct=True),
+        comments_count=Count("comment", distinct=True),
+    ).order_by("-created_at")
 
 ```
 
-- **Attributes**:
-  - **permission_classes**: Restricts update and delete actions to the post owner.
-  - **queryset**: Includes counts for likes and comments to provide detailed view data.
- 
+- **Purpose**: Allows retrieving a post and updating or deleting it if the current user owns it.  
+- **Permissions**: Restricts update and delete actions to the post owner.  
+
+### Features in `PostList` and `PostDetail`
+
+- **Annotations**:  
+  - `likes_count`: Annotates the total number of likes for each post.  
+  - `comments_count`: Annotates the total number of comments for each post.  
+
+- **Filtering**:  
+  - By category: `category`  
+  - By owner’s profile: `owner__profile`  
+  - By profiles followed by the owner: `owner__followed__owner__profile`  
+  - By liked profiles: `likes__owner__profile`  
+
+- **Searching**:  
+  - By username: `owner__username`  
+  - By title: `title`  
+  - By category: `category`  
+
+- **Ordering**:  
+  - By likes count: `likes_count`  
+  - By comments count: `comments_count`  
+  - By like creation date: `likes__created_at`  
+  - By category: `category`  
+
+
 ### URLs
 
 Defines URL patterns for accessing post-related views.
@@ -828,6 +975,8 @@ Defines URL patterns for accessing post-related views.
 ```python
 from django.urls import path
 from posts import views
+
+
 
 urlpatterns = [
     path('posts/', views.PostList.as_view()),

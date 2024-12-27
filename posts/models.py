@@ -17,7 +17,7 @@ class Post(models.Model):
     image = models.ImageField(
         upload_to="images/", default="../post_nhmbfe", blank=True, null=True
     )
-    category = models.CharField(  # Dodane pole kategorii
+    category = models.CharField(
         max_length=50,
         choices=CATEGORY_CHOICES,
         default="general",
