@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 
 
 class Post(models.Model):
+    CATEGORY_CHOICES = [
+        ("general", "General"),
+        ("question", "Question"),
+        ("tip", "Tip"),
+    ]
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -10,6 +16,13 @@ class Post(models.Model):
     content = models.TextField(blank=True)
     image = models.ImageField(
         upload_to="images/", default="../post_nhmbfe", blank=True, null=True
+    )
+    category = models.CharField(  
+        max_length=50,
+        choices=CATEGORY_CHOICES,
+        default="general",
+        blank=True,
+        null=True,
     )
 
     class Meta:
