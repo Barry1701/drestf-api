@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 
 class Post(models.Model):
     CATEGORY_CHOICES = [
+        ("eczema", "Eczema"),
+        ("allergy", "Allergy"),
         ("general", "General"),
-        ("question", "Question"),
-        ("tip", "Tip"),
     ]
 
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -17,7 +17,7 @@ class Post(models.Model):
     image = models.ImageField(
         upload_to="images/", default="../post_nhmbfe", blank=True, null=True
     )
-    category = models.CharField(  
+    category = models.CharField(  # Dodane pole kategorii
         max_length=50,
         choices=CATEGORY_CHOICES,
         default="general",
