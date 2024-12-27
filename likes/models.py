@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from posts.models import Post
 
+
 class Like(models.Model):
     """
     Like model, related to 'owner' and 'post'.
@@ -19,7 +20,9 @@ class Like(models.Model):
     class Meta:
         ordering = ["-created_at"]
         constraints = [
-            models.UniqueConstraint(fields=["owner", "post"], name="unique_like")
+            models.UniqueConstraint(
+                fields=["owner", "post"], name="unique_like"
+            )
         ]
 
     def __str__(self):

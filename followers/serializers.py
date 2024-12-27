@@ -21,7 +21,9 @@ class FollowerSerializer(serializers.ModelSerializer):
         Validate that a user is not trying to follow themselves.
         """
         if self.context["request"].user == attrs["followed"]:
-            raise serializers.ValidationError({"detail": "You cannot follow yourself."})
+            raise serializers.ValidationError(
+                {"detail": "You cannot follow yourself."}
+            )
         return attrs
 
     def create(self, validated_data):

@@ -20,8 +20,13 @@ class LikeSerializer(serializers.ModelSerializer):
         Ensure that the same user cannot like the same post more than once.
         """
         request = self.context.get("request")
-        if request and Like.objects.filter(owner=request.user, post=attrs["post"]).exists():
-            raise serializers.ValidationError({"detail": "You have already liked this post."})
+        if request and Like.objects.filter(
+            owner=request.user,
+            post=attrs["post"]
+        ).exists():
+            raise serializers.ValidationError(
+                {"detail": "You have already liked this post."}
+            )
         return attrs
 
     def create(self, validated_data):
@@ -31,4 +36,6 @@ class LikeSerializer(serializers.ModelSerializer):
         try:
             return super().create(validated_data)
         except IntegrityError:
-            raise serializers.ValidationError({"detail": "You have already liked this post."})
+            raise serializers.ValidationError(
+                {"detail": "You have already liked this post."}
+            )

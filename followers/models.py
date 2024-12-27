@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+
 class Follower(models.Model):
     owner = models.ForeignKey(
         User, related_name="following", on_delete=models.CASCADE
@@ -14,7 +15,9 @@ class Follower(models.Model):
     class Meta:
         ordering = ["-created_at"]
         constraints = [
-            models.UniqueConstraint(fields=["owner", "followed"], name="unique_follower")
+            models.UniqueConstraint(
+                fields=["owner", "followed"], name="unique_follower"
+            )
         ]
 
     def clean(self):

@@ -26,11 +26,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def validate_image(self, value):
         """
-        Validate the uploaded image's size, height, and width if provided.
+        Validate the uploaded image's size, height, and width.
         """
-        if not value:  # Jeśli obraz nie został przesłany, pomiń walidację
-            return value
-
         max_size = 2 * 1024 * 1024  # 2MB
         max_dimension = 4096  # 4096px
 
@@ -64,4 +61,3 @@ class ProductSerializer(serializers.ModelSerializer):
             "category",
             "category_name",
         ]
-

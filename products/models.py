@@ -32,7 +32,7 @@ class Product(models.Model):
     )
     image = models.ImageField(
         upload_to="images/",
-        default="../products_cfm6d0",
+        default="../default_product_vjeszy",
         blank=True,
         null=True,
     )
