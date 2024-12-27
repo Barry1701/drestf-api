@@ -55,6 +55,7 @@ class PostSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "image",
+            "category",
             "like_id",
             "likes_count",
             "comments_count",
