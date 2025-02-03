@@ -22,7 +22,7 @@ The following image shows the root page of the API, providing a welcome message.
 - [Project Dependencies](#project-dependencies)
 - [Deployment](#deployment)
 - [Testing](#testing)
-
+- [Security Considerations](#security-considerations)
 
 ## Additional Files
 
@@ -1612,11 +1612,72 @@ git add $(git ls-files | grep -v 'migrations/')
 
 ## ✅Testing
 
-### Manual Testing
+### Manual Testing 🛠️
 - The API was manually tested using **Postman** to verify the following endpoints:
   - User authentication: Registration, login, and token refresh.
   - CRUD operations for posts, comments, likes, followers, and products.
   - Image uploads via Cloudinary.
+
+### Automated Testing 🧪
+
+Automated tests have been implemented using **Django's test framework** and **Django REST Framework's `APITestCase`**.  
+Test cases cover endpoints across multiple apps:
+
+### Comments Tests:
+- ✅ Verify that an **authenticated user** can create a comment.
+- ❌ Ensure that an **anonymous user** is prevented from creating a comment.
+
+### Followers Tests:
+- ✅ Ensure that an **authenticated user** can follow another user.
+- ❌ Prevent users from following **themselves**.
+- ❌ Prevent **duplicate follow relationships**.
+- ✅ Verify that the **followers list endpoint** returns the correct records.
+
+### Likes Tests:
+- ✅ Verify that an **authenticated user** can like a post.
+- ❌ Ensure that a **user cannot like the same post twice**.
+- ✅ Check that the **likes list endpoint** returns the created likes.
+- ✅ Ensure that a user can **delete their like**.
+
+### Posts Tests:
+- ✅ Ensure that the **posts list endpoint** returns posts with **annotated fields** (`likes_count`, `comments_count`).
+- ✅ Verify that an **authenticated user** can create a post.
+- ❌ Ensure that **only the owner** can update or delete a post.
+
+### Running Tests
+To run the automated tests, execute the following command in your terminal:
+
+```sh
+python manage.py test
+
+```
+
+If you encounter warnings about open handles or worker processes not exiting gracefully, run:
+
+```sh
+
+python3 manage.py test --detectOpenHandles
+
+```
+
+## 🔐 Security Considerations
+
+### Debug Mode:
+- **Debug mode** is enabled **only in development** by setting the `DEV` environment variable.  
+- Ensure that `DEBUG` is set to `False` in **production** to avoid exposing **sensitive information**.
+
+### Environment Variables:
+- Sensitive data such as:
+  - `SECRET_KEY`
+  - `DATABASE_URL`
+  - `CLOUDINARY_URL`
+- These are managed via **environment variables** (and stored in `env.py` locally).  
+- In **production**, these should be **securely configured** and **never hard-coded**.
+
+### CORS and CSRF:
+- The API is secured by **proper CORS configuration** and **CSRF protection settings**.
+- Ensures that **only trusted origins** can access the API.
+
 
 [⬆️ Back to Top](#top)
 
