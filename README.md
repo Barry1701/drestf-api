@@ -1660,7 +1660,7 @@ python3 manage.py test --detectOpenHandles
 
 ```
 
-## 🔐 Security Considerations
+## 🔐Security Considerations
 
 ### Debug Mode:
 - **Debug mode** is enabled **only in development** by setting the `DEV` environment variable.  
