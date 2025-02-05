@@ -13,6 +13,12 @@ class PostSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
+    tags = serializers.SlugRelatedField(
+        many=True,
+        queryset=Tag.objects.all(),
+        slug_field='name',
+        required=False
+    )
 
     def validate_image(self, value):
         # Check image size; raise error if it exceeds 2MB
@@ -59,4 +65,5 @@ class PostSerializer(serializers.ModelSerializer):
             "like_id",
             "likes_count",
             "comments_count",
+            "tags",
         ]
