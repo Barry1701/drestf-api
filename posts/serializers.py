@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from posts.models import Post
+from posts.models import Post, Tag
 from likes.models import Like
 
 
@@ -13,7 +13,7 @@ class PostSerializer(serializers.ModelSerializer):
     like_id = serializers.SerializerMethodField()
     likes_count = serializers.ReadOnlyField()
     comments_count = serializers.ReadOnlyField()
-    tags = serializers.SlugRelatedField(
+    tags = TagSlugRelatedField(
         many=True,
         queryset=Tag.objects.all(),
         slug_field='name',
