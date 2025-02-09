@@ -1,11 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-
-    def __str__(self):
-        return self.name
 
 class Post(models.Model):
     CATEGORY_CHOICES = [
@@ -20,7 +15,10 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField(blank=True)
     image = models.ImageField(
-        upload_to="images/", default="../post_nhmbfe", blank=True, null=True
+        upload_to="images/",
+        default="../post_nhmbfe",
+        blank=True,
+        null=True,
     )
     category = models.CharField(
         max_length=50,
@@ -29,8 +27,6 @@ class Post(models.Model):
         blank=True,
         null=True,
     )
-
-    tags = models.ManyToManyField(Tag, blank=True, related_name="posts")
 
     class Meta:
         ordering = ["-created_at"]
