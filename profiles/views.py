@@ -5,7 +5,6 @@ from drf_api.permissions import IsOwnerOrReadOnly
 from .models import Profile
 from .serializers import ProfileSerializer
 
-
 class ProfileList(generics.ListAPIView):
     """
     List all profiles.
@@ -18,14 +17,23 @@ class ProfileList(generics.ListAPIView):
         following_count=Count("owner__following", distinct=True),
     ).order_by("-created_at")
     serializer_class = ProfileSerializer
+
+    # Filter and ordering configuration
     filter_backends = [
         filters.OrderingFilter,
         DjangoFilterBackend,
+        # text-based search, you could add:
+        filters.SearchFilter,
     ]
+
+    # Add "allergy_type" to filterset_fields so you can do: /profiles/?allergy_type=nuts
     filterset_fields = [
         "owner__following__followed__profile",
         "owner__followed__owner__profile",
+        "allergy_type",
     ]
+
+    # Fields that can be used in ordering queries: /profiles/?ordering=some_field
     ordering_fields = [
         "posts_count",
         "followers_count",
@@ -41,9 +49,10 @@ class ProfileDetail(generics.RetrieveUpdateAPIView):
     """
 
     permission_classes = [IsOwnerOrReadOnly]
+    serializer_class = ProfileSerializer
+
     queryset = Profile.objects.annotate(
         posts_count=Count("owner__post", distinct=True),
         followers_count=Count("owner__followed", distinct=True),
         following_count=Count("owner__following", distinct=True),
     ).order_by("-created_at")
-    serializer_class = ProfileSerializer
