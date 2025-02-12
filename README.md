@@ -1252,9 +1252,20 @@ The `profiles` app manages user profiles, including viewing and updating profile
 The `Profile` model represents the user’s profile details, linked to the `User` model.
 
 ```python
+
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
+
+ALLERGY_CHOICES = [
+    ('none', 'No Specific Allergy'),
+    ('milk', 'Milk Allergy'),
+    ('nuts', 'Nut Allergy'),
+    ('wheat', 'Wheat Allergy'),
+    ('eggs', 'Egg Allergy'),
+    ('shellfish', 'Shellfish Allergy'),
+    ('dairy', 'Dairy Allergy')
+]
 
 class Profile(models.Model):
     owner = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -1263,7 +1274,12 @@ class Profile(models.Model):
     name = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=True)
     image = models.ImageField(
-        upload_to='images/', default='../default_profile_uj9rfd'
+        upload_to='images/', default='../profile_ars7c2'
+    )
+    allergy_type = models.CharField(
+        max_length=20,
+        choices=ALLERGY_CHOICES,
+        default='none'
     )
 
     class Meta:
@@ -1289,6 +1305,7 @@ post_save.connect(create_profile, sender=User)
   - **name**: User’s name or display name.
   - **content**: Additional text content about the user.
   - **image**: Profile image with a default placeholder image.
+  - **allergy_type**: Indicates the type of allergy the user has (if any).
 
 - **Meta Options**:
 
@@ -1333,6 +1350,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'id', 'owner', 'created_at', 'updated_at', 'name',
             'content', 'image', 'is_owner', 'following_id',
             'posts_count', 'followers_count', 'following_count',
+            'allergy_type'
         ]
 
 ```
@@ -1346,11 +1364,18 @@ class ProfileSerializer(serializers.ModelSerializer):
   - **posts_count**: Total posts created by the profile owner.
   - **followers_count**: Total followers of the profile owner.
   - **following_count**: Total number of users the profile owner follows.
+  - **allergy_type**: The allergy type of the profile owner.
 
 - **Methods**:
 
   - **get_is_owner**: Checks if the current user owns the profile.
   - **get_following_id**: Retrieves the follower ID if the current user is following the profile owner.
+ 
+### Updates
+
+- **Added** `allergy_type` field to the **Profile** model to store user allergy preferences.
+- **Updated** `ProfileSerializer` to include the `allergy_type` field in API responses.
+
  
 ### Views
 The views manage listing all profiles and retrieving/updating individual profiles.
