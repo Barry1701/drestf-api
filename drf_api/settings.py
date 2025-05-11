@@ -67,8 +67,7 @@ DEBUG = "DEV" in os.environ
 
 ALLOWED_HOSTS = [
     os.environ.get("ALLOWED_HOST"),
-    "8000-barry1701-drestfapi-owkeb3fyua1.ws.codeinstitute-ide.net"
-    "8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net",
+    "8000-barry1701-drestfapi-fikxiji7bwf.ws-eu118.gitpod.io",
     "remeskin-00de58d1deef.herokuapp.com",
     "localhost",
 ]
@@ -111,6 +110,7 @@ INSTALLED_APPS = [
     "likes",
     "followers",
     "products",
+    "inbox",
 ]
 
 SITE_ID = 1
