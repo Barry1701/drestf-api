@@ -74,12 +74,8 @@ ALLOWED_HOSTS = [
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net",
-    "https://8000-barry1701-drestfapi-owkeb3fyua1.ws.codeinstitute-ide.net/",
-    "https://drestf-api-8914bba56128.herokuapp.com",
+    "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu118.gitpod.io",
     "https://remeskin-00de58d1deef.herokuapp.com",
-    "https://3000-barry1701-remeskincom-4ugf58qe7yy.ws.codeinstitute-ide.net",
-    "https://3000-barry1701-remeskincom-6dsnn5rwpkb.ws.codeinstitute-ide.net/",
 ]
 
 
@@ -128,12 +124,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu118.gitpod.io",
     "https://remeskin-00de58d1deef.herokuapp.com",
-    "https://3000-barry1701-remeskincom-4ugf58qe7yy.ws.codeinstitute-ide.net",
-    "https://3000-barry1701-remeskincom-6dsnn5rwpkb.ws.codeinstitute-ide.net/",
-    "https://8000-barry1701-drestfapi-55a6l76ssak.ws.codeinstitute-ide.net",
-    "https://8000-barry1701-drestfapi-owkeb3fyua1.ws.codeinstitute-ide.net/",
-    "https://drestf-api-8914bba56128.herokuapp.com",
 ]
 
 
