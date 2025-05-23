@@ -67,7 +67,7 @@ DEBUG = "DEV" in os.environ
 
 ALLOWED_HOSTS = [
     os.environ.get("ALLOWED_HOST"),
-    "8000-barry1701-drestfapi-fikxiji7bwf.ws-eu118.gitpod.io",
+    "8000-barry1701-drestfapi-fikxiji7bwf.ws-eu119.gitpod.io",
     "remeskin-00de58d1deef.herokuapp.com",
     "localhost",
 ]
@@ -75,6 +75,7 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu118.gitpod.io",
+    "https://8000-barry1701-drestfapi-fikxiji7bwf.ws-eu119.gitpod.io",
     "https://remeskin-00de58d1deef.herokuapp.com",
 ]
 
@@ -125,6 +126,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu118.gitpod.io",
+    "https://8000-barry1701-drestfapi-fikxiji7bwf.ws-eu119.gitpod.io",
     "https://remeskin-00de58d1deef.herokuapp.com",
 ]
 
