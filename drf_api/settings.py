@@ -125,8 +125,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu118.gitpod.io",
-    "https://8000-barry1701-drestfapi-fikxiji7bwf.ws-eu118.gitpod.io",
+    "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu119.gitpod.io",
+    "https://8000-barry1701-drestfapi-fikxiji7bwf.ws-eu119.gitpod.io",
     "https://remeskin-00de58d1deef.herokuapp.com",
 ]
 
@@ -147,6 +147,7 @@ CORS_ALLOW_CREDENTIALS = True
 # if "CLIENT_ORIGIN" in os.environ:
 #     CORS_ALLOWED_ORIGINS = [os.environ.get("CLIENT_ORIGIN")]
 
+CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://.*\.gitpod\.io$"]
 
 
 ROOT_URLCONF = "drf_api.urls"
