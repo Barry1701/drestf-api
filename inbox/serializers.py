@@ -5,8 +5,10 @@ from .models import DirectMessage
 
 class DirectMessageSerializer(serializers.ModelSerializer):
     sender_username = serializers.ReadOnlyField(source="sender.username")
-    receiver = serializers.PrimaryKeyRelatedField(
-        source="recipient", queryset=User.objects.all()
+    receiver = serializers.SlugRelatedField(
+        source="recipient",
+        slug_field="username",
+        queryset=User.objects.all(),
     )
     receiver_username = serializers.ReadOnlyField(source="recipient.username")
     content = serializers.CharField(source="body")
