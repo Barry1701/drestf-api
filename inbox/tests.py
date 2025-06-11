@@ -52,3 +52,35 @@ class DirectMessageAPITests(APITestCase):
         )
         self.assertEqual(patch_resp.status_code, status.HTTP_200_OK)
         self.assertTrue(patch_resp.data["read"])
+
+    def test_message_marked_as_read_on_retrieve(self):
+        """Retrieving a message as the recipient should mark it as read."""
+        self.client.login(username="sender", password="pass123")
+        data = {
+            "receiver": "receiver",
+            "subject": "Test",
+            "content": "Hello",
+        }
+        create_resp = self.client.post(self.inbox_url, data, format="json")
+        msg_id = create_resp.data["id"]
+        self.client.logout()
+
+        self.client.login(username="receiver", password="pass123")
+        get_resp = self.client.get(f"/messages/{msg_id}/", format="json")
+        self.assertEqual(get_resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(get_resp.data["read"])
+
+    def test_sender_retrieve_does_not_mark_read(self):
+        """Retrieving a sent message should not change its read status."""
+        self.client.login(username="sender", password="pass123")
+        data = {
+            "receiver": "receiver",
+            "subject": "Test",
+            "content": "Hello",
+        }
+        create_resp = self.client.post(self.inbox_url, data, format="json")
+        msg_id = create_resp.data["id"]
+
+        get_resp = self.client.get(f"/messages/{msg_id}/", format="json")
+        self.assertEqual(get_resp.status_code, status.HTTP_200_OK)
+        self.assertFalse(get_resp.data["read"])
