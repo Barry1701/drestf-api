@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Q
 
 from rest_framework import generics, permissions, viewsets
+from rest_framework.response import Response
 from .models import DirectMessage
 from .serializers import (
     DirectMessageSerializer,
@@ -50,6 +51,14 @@ class DirectMessageDetail(generics.RetrieveUpdateAPIView):
             Q(sender=user) | Q(recipient=user)
         )
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.recipient == request.user and not instance.read:
+            instance.read = True
+            instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
 class DirectMessageViewSet(viewsets.ModelViewSet):
     """ViewSet providing list, create and retrieve actions for messages."""
@@ -62,6 +71,14 @@ class DirectMessageViewSet(viewsets.ModelViewSet):
         return DirectMessage.objects.filter(
             Q(sender=user) | Q(recipient=user)
         ).order_by("-created_at")
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.recipient == request.user and not instance.read:
+            instance.read = True
+            instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
     def get_serializer_class(self):
         if self.action in ["retrieve", "partial_update", "update"]:
