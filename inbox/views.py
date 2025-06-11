@@ -3,7 +3,10 @@ from django.db.models import Q
 
 from rest_framework import generics, permissions, viewsets
 from .models import DirectMessage
-from .serializers import DirectMessageSerializer
+from .serializers import (
+    DirectMessageSerializer,
+    DirectMessageDetailSerializer,
+)
 
 
 class InboxListCreate(generics.ListCreateAPIView):
@@ -59,6 +62,11 @@ class DirectMessageViewSet(viewsets.ModelViewSet):
         return DirectMessage.objects.filter(
             Q(sender=user) | Q(recipient=user)
         ).order_by("-created_at")
+
+    def get_serializer_class(self):
+        if self.action in ["retrieve", "partial_update", "update"]:
+            return DirectMessageDetailSerializer
+        return DirectMessageSerializer
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
