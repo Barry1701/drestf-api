@@ -125,8 +125,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu119.gitpod.io",
-    "https://8000-barry1701-drestfapi-fikxiji7bwf.ws-eu119.gitpod.io",
+    "https://3000-barry1701-remeskincom-inzdi3e83ko.ws-eu120.gitpod.io",
+    "https://8000-barry1701-drestfapi-fikxiji7bwf.ws-eu120.gitpod.io",
     "https://remeskin-00de58d1deef.herokuapp.com",
 ]
 
