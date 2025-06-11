@@ -27,3 +27,10 @@ class DirectMessageSerializer(serializers.ModelSerializer):
             "read",
         ]
         read_only_fields = ["sender", "created_at", "read"]
+
+
+class DirectMessageDetailSerializer(DirectMessageSerializer):
+    """Serializer used for retrieving and updating a single message."""
+
+    class Meta(DirectMessageSerializer.Meta):
+        read_only_fields = ["sender", "created_at"]

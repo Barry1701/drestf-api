@@ -31,3 +31,24 @@ class DirectMessageAPITests(APITestCase):
         self.assertEqual(response.data["sender_username"], "sender")
         self.assertEqual(response.data["receiver"], "receiver")
         self.assertEqual(response.data["receiver_username"], "receiver")
+
+    def test_receiver_can_mark_message_as_read(self):
+        """Recipient should be able to mark a message as read."""
+        self.client.login(username="sender", password="pass123")
+        data = {
+            "receiver": "receiver",
+            "subject": "Test",
+            "content": "Hello",
+        }
+        create_resp = self.client.post(self.inbox_url, data, format="json")
+        msg_id = create_resp.data["id"]
+        self.client.logout()
+
+        self.client.login(username="receiver", password="pass123")
+        patch_resp = self.client.patch(
+            f"/messages/{msg_id}/",
+            {"read": True},
+            format="json",
+        )
+        self.assertEqual(patch_resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(patch_resp.data["read"])
