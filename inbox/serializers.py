@@ -2,15 +2,14 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import DirectMessage
 
-
 class DirectMessageSerializer(serializers.ModelSerializer):
     sender_username = serializers.ReadOnlyField(source="sender.username")
-    receiver = serializers.SlugRelatedField(
-        source="recipient",
+    # mapowanie pola recipient do username
+    recipient = serializers.SlugRelatedField(
         slug_field="username",
         queryset=User.objects.all(),
     )
-    receiver_username = serializers.ReadOnlyField(source="recipient.username")
+    recipient_username = serializers.ReadOnlyField(source="recipient.username")
     content = serializers.CharField(source="body")
 
     class Meta:
@@ -19,8 +18,8 @@ class DirectMessageSerializer(serializers.ModelSerializer):
             "id",
             "sender",
             "sender_username",
-            "receiver",
-            "receiver_username",
+            "recipient",
+            "recipient_username",
             "subject",
             "content",
             "created_at",
@@ -33,4 +32,5 @@ class DirectMessageDetailSerializer(DirectMessageSerializer):
     """Serializer used for retrieving and updating a single message."""
 
     class Meta(DirectMessageSerializer.Meta):
+        # mozna tylko odczytywać nadawcę i datę
         read_only_fields = ["sender", "created_at"]
