@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     "cloudinary",
     "rest_framework",
     "django_filters",
+    "channels",
     "rest_framework.authtoken",
     "django.contrib.sites",
     "allauth",
@@ -253,3 +254,12 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Channels configuration
+ASGI_APPLICATION = "drf_api.routing.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
