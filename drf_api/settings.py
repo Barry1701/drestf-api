@@ -108,7 +108,8 @@ INSTALLED_APPS = [
     "likes",
     "followers",
     "products",
-    "inbox",
+    "inbox.apps.InboxConfig",
+    "channels",
 ]
 
 SITE_ID = 1
@@ -255,11 +256,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Channels configuration
-ASGI_APPLICATION = "drf_api.routing.application"
+ASGI_APPLICATION = "drestf_api.routing.application"
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+"default": {
+"BACKEND": "channels.layers.InMemoryChannelLayer"
+}
 }
