@@ -109,7 +109,7 @@ INSTALLED_APPS = [
     "followers",
     "products",
     "inbox.apps.InboxConfig",
-    "channels",
+    
 ]
 
 SITE_ID = 1
