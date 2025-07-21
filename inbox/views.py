@@ -19,8 +19,21 @@ class InboxListCreate(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        # tylko wiadomości do zalogowanego usera
-        return DirectMessage.objects.filter(recipient=self.request.user)
+        """Return messages for the logged in user.
+
+        Supports filtering by the ``read`` query parameter. ``?read=true`` or
+        ``?read=false`` will limit the results accordingly. Any other value is
+        ignored and the full set is returned.
+        """
+        qs = DirectMessage.objects.filter(recipient=self.request.user)
+        read_param = self.request.query_params.get("read")
+        if read_param is not None:
+            lower = read_param.lower()
+            if lower in ("true", "1"):
+                qs = qs.filter(read=True)
+            elif lower in ("false", "0"):
+                qs = qs.filter(read=False)
+        return qs.order_by("-created_at")
 
     def perform_create(self, serializer):
         serializer.save(sender=self.request.user)
