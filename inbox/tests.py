@@ -84,3 +84,33 @@ class DirectMessageAPITests(APITestCase):
         get_resp = self.client.get(f"/messages/{msg_id}/", format="json")
         self.assertEqual(get_resp.status_code, status.HTTP_200_OK)
         self.assertFalse(get_resp.data["read"])
+
+    def test_inbox_filter_by_read_param(self):
+        """Inbox endpoint should filter messages by the 'read' query param."""
+        self.client.login(username="sender", password="pass123")
+        data = {
+            "receiver": "receiver",
+            "subject": "Test1",
+            "content": "Hello",
+        }
+        resp1 = self.client.post(self.inbox_url, data, format="json")
+        data["subject"] = "Test2"
+        resp2 = self.client.post(self.inbox_url, data, format="json")
+        id1 = resp1.data["id"]
+        id2 = resp2.data["id"]
+        self.client.logout()
+
+        self.client.login(username="receiver", password="pass123")
+        # mark first message as read
+        self.client.patch(f"/messages/{id1}/", {"read": True}, format="json")
+
+        read_resp = self.client.get(self.inbox_url + "?read=true", format="json")
+        unread_resp = self.client.get(self.inbox_url + "?read=false", format="json")
+
+        self.assertEqual(read_resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(unread_resp.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(read_resp.data["results"]), 1)
+        self.assertEqual(len(unread_resp.data["results"]), 1)
+        self.assertEqual(read_resp.data["results"][0]["id"], id1)
+        self.assertEqual(unread_resp.data["results"][0]["id"], id2)
